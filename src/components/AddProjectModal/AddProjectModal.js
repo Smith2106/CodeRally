@@ -183,12 +183,12 @@ class AddProjectModal extends Component {
     }
     this.setState({ loading: true });
     try {
-      const techString = chipData.map(a => a.label).toString();
+      const tech = chipData.map(a => a.label).toString();
       await AppService.postProject({
         name,
         description,
         partners,
-        techString,
+        tech,
         link,
         chatLink,
         repoLink,
