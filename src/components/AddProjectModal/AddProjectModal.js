@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
+import Chip from '@material-ui/core/Chip';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import grey from '@material-ui/core/colors/grey';
 import {
@@ -25,9 +26,15 @@ const styles = theme => ({
   title: {
     paddingTop: '20px',
   },
+  chip: {
+    margin: theme.spacing.unit / 2,
+  },
   root: {
     paddingTop: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
   },
   button: {
     backgroundColor: deepPurple[700],
@@ -60,6 +67,7 @@ class AddProjectModal extends Component {
       showLinkError: false,
       showChatLinkError: false,
       showRepoLinkError: false,
+      chipData: [],
     };
     this.fetchProjects = props.fetchProjects;
     this.renderSnackbar = props.renderSnackbar;
@@ -72,6 +80,31 @@ class AddProjectModal extends Component {
     this.handleRepoLinkChange = this.handleRepoLinkChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.listenEnter = this.listenEnter.bind(this);
+
+    this.handleDelete = data => () => {
+      this.setState((state) => {
+        const chipData = [...state.chipData];
+        const chipToDelete = chipData.indexOf(data);
+        chipData.splice(chipToDelete, 1);
+        return { chipData };
+      });
+    };
+  }
+
+  listenEnter(e) {
+    if (e.key === 'Enter') {
+      const { tech } = this.state;
+      this.setState((prev) => {
+        const temp = prev;
+        temp.chipData.push({
+          key: prev.chipData.length + 1,
+          label: tech,
+        });
+        temp.tech = '';
+        return temp;
+      });
+    }
   }
 
   handleNameChange(e) {
@@ -128,7 +161,7 @@ class AddProjectModal extends Component {
       name,
       description,
       partners,
-      tech,
+      chipData,
       link,
       chatLink,
       repoLink,
@@ -150,11 +183,12 @@ class AddProjectModal extends Component {
     }
     this.setState({ loading: true });
     try {
+      const techString = chipData.map(a => a.label).toString();
       await AppService.postProject({
         name,
         description,
         partners,
-        tech,
+        techString,
         link,
         chatLink,
         repoLink,
@@ -164,6 +198,7 @@ class AddProjectModal extends Component {
         description: '',
         partners: '',
         tech: '',
+        chipData: [],
         link: '',
         chatLink: '',
         repoLink: '',
@@ -192,6 +227,7 @@ class AddProjectModal extends Component {
       showChatLinkError,
       showRepoLinkError,
       loading,
+      chipData,
     } = this.state;
     const { open, classes } = this.props;
     return (
@@ -231,9 +267,26 @@ class AddProjectModal extends Component {
                   label="Tech Stack"
                   value={tech}
                   onChange={this.handleTechChange}
+                  onKeyPress={this.listenEnter}
+                  helperText="Press enter to add each tech"
                 />
               </DialogContent>
             </Grid>
+            {chipData.length !== 0 && (
+              <Grid item xs={12}>
+                <DialogContent className={classes.root}>
+                  {chipData.map(data => (
+                    <Chip
+                      color="primary"
+                      variant="outlined"
+                      key={data.key}
+                      label={data.label}
+                      onDelete={this.handleDelete(data)}
+                      className={classes.chip}
+                    />
+                  ))}
+                </DialogContent>
+              </Grid>)}
             <Grid item xs={12}>
               <DialogContent className={classes.root}>
                 <TextField

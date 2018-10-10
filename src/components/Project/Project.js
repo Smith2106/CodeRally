@@ -11,6 +11,11 @@ import AppService from '../../services/AppService';
 
 const styles = theme => ({
   root: {
+    paddingTop: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
   },
   card: {
     boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
@@ -21,14 +26,14 @@ const styles = theme => ({
     padding: '10px',
     '&:hover': {
       boxShadow: ' 0 8px 16px 0 rgba(0,0,0,0.2)',
-    }
+    },
   },
   title: {
     fontSize: '1.75rem !important',
     letterSpacing: '0.25px !important',
     marginBottom: '20px !important',
     textAlign: 'center !important',
-    color: '#9f5afd!important'
+    color: '#9f5afd!important',
   },
   description: {
     marginTop: '25px !important',
@@ -53,19 +58,19 @@ const styles = theme => ({
     border: '2px solid #ff9478',
     '&:hover': {
       border: '3px solid #ff9478',
-    }
+    },
   },
   Repo: {
     border: '2px solid #f64747',
     '&:hover': {
       border: '3px solid #f64747',
-    }
+    },
   },
   Chat: {
     border: '2px solid #f03434',
     '&:hover': {
       border: '3px solid #f03434',
-    }
+    },
   },
   chipDivider: {
     margin: '10px 0px !important',
@@ -91,7 +96,7 @@ const styles = theme => ({
     textTransform: 'uppercase',
     wordSpacing: '1px',
     letterSpacing: '0.25px',
-  }
+  },
 });
 
 
@@ -108,7 +113,7 @@ const getLinkElement = (linkName, linkValue, classObj) => {
       </a>
     );
   }
-}
+};
 
 class Project extends Component {
   constructor(props) {
@@ -151,11 +156,14 @@ class Project extends Component {
                 <Typography className={classes.techTitle} component="h2">
                   {'Tech Stack'}
                 </Typography>
-                <Chip
-                  label={project && project.tech ? project.tech : ''}
-                  className={classes.chipDivider}
-                  color="secondary"
-                />
+                {project && project.tech.split(',').map(data => (
+                  <Chip
+                    key={data}
+                    label={data}
+                    color="secondary"
+                    className={classes.chip}
+                  />
+                ))}
               </Typography>
               <Typography className={classes.resourcesContainer} component="div">
                 <Typography className={classes.resourcesTitle} component="h2">

@@ -13,7 +13,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import grey from '@material-ui/core/colors/grey';
-import yellow from '@material-ui/core/colors/yellow';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import AddProjectModal from '../AddProjectModal/AddProjectModal';
@@ -24,6 +23,8 @@ const styles = theme => ({
     width: '100%',
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
+    paddingTop: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
   },
   icon: {
     margin: theme.spacing.unit * 2,
@@ -35,6 +36,9 @@ const styles = theme => ({
     bottom: theme.spacing.unit * 2,
     right: theme.spacing.unit * 2,
     position: 'absolute',
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
   },
   tableWrapper: {
     marginTop: '10px',
@@ -55,15 +59,6 @@ const styles = theme => ({
     },
     color: theme.palette.common.white,
     margin: '0 10px',
-  },
-  chip: {
-    backgroundColor: yellow[500],
-    color: grey[900],
-    marginLeft: 10,
-    fontWeight: 'bold',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1.5px 2.5px 0 rgba(0, 0, 0, 0.19)',
-    height: '2.0em',
-    fontSize: '0.825em',
   },
 });
 
@@ -185,7 +180,17 @@ class Home extends Component {
                         <TableCell>{description}</TableCell>
                       </Hidden>
                       <Hidden only={['xs', 'sm']}>
-                        <TableCell>{tech}</TableCell>
+                        <TableCell>
+                          {tech.split(',').map(data => (
+                            <Chip
+                              color="primary"
+                              variant="outlined"
+                              key={data}
+                              label={data}
+                              className={classes.chip}
+                            />
+                          ))}
+                        </TableCell>
                       </Hidden>
                       <TableCell>
                         <Button className={classes.button} href={`/projects/${name}`}>
