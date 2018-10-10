@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
 import deepPurple from '@material-ui/core/colors/deepPurple';
+import yellow from '@material-ui/core/colors/yellow';
 import grey from '@material-ui/core/colors/grey';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -59,6 +60,15 @@ const styles = theme => ({
     },
     color: theme.palette.common.white,
     margin: '0 10px',
+  },
+  newChip: {
+    backgroundColor: yellow[500],
+    color: grey[900],
+    marginLeft: 10,
+    fontWeight: 'bold',
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1.5px 2.5px 0 rgba(0, 0, 0, 0.19)',
+    height: '2.0em',
+    fontSize: '0.825em',
   },
 });
 
@@ -171,7 +181,7 @@ class Home extends Component {
                       {diffDays < 5 ? (
                         <TableCell>
                           {name}
-                          <Chip className={classes.chip} label="NEW" />
+                          <Chip className={classes.newChip} label="NEW" />
                         </TableCell>
                       ) : (
                         <TableCell>{name}</TableCell>
