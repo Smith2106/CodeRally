@@ -1,5 +1,5 @@
 export const validateUrl = (url) => {
-  const urlRegex = /^https:\/\/(www\.)?[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,10}$/;
+  const urlRegex = /^https:\/\/(www\.)?[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,10}/;
   if (urlRegex.test(url)) {
     return true;
   }
