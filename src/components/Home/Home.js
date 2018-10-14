@@ -82,12 +82,15 @@ class Home extends Component {
       initialProjects: [],
       projects: [],
       snackbarText: '',
+      techChips: []
     };
     this.addProject = this.addProject.bind(this);
     this.modalClosed = this.modalClosed.bind(this);
     this.fetchProjects = this.fetchProjects.bind(this);
     this.renderSnackbar = this.renderSnackbar.bind(this);
     this.filterProjects = this.filterProjects.bind(this);
+    this.toggleTechChip = this.toggleTechChip.bind(this);
+    this.compTech = this.compTech.bind(this);
   }
 
   async componentDidMount() {
@@ -108,6 +111,15 @@ class Home extends Component {
     this.setState({ modalOpen: true });
   }
 
+  toggleTechChip(event) {
+    const { techChips } = this.state;
+    const tech = event.target.textContent;
+    if (!techChips.includes(tech)) techChips.push(tech);
+    else techChips.splice(techChips.indexOf(tech), 1);
+    this.setState({ techChips });
+    this.sortProjects();
+  }
+
   modalClosed() {
     this.setState({ modalOpen: false });
     this.fetchProjects();
@@ -125,6 +137,24 @@ class Home extends Component {
     this.setState({ projects: updatedProject });
   }
 
+  sortProjects() {
+    const { projects } = this.state;
+    let updatedProjects = projects;
+    updatedProjects.sort(this.compTech);
+    this.setState({ projects: updatedProjects });
+  }
+
+  compTech(project1, project2) {
+    let project1Score = 0
+    let project2Score = 0
+    this.state.techChips.forEach(techChip => {
+      if (project1.tech.includes(techChip)) project1Score++;
+      if (project2.tech.includes(techChip)) project2Score++;
+    });
+
+    return project2Score - project1Score;
+  }
+
   renderSnackbar({ snackbarText }) {
     this.setState({ snackbarOpen: true, snackbarText });
     setTimeout(() => {
@@ -133,7 +163,7 @@ class Home extends Component {
   }
 
   renderProjects() {
-    const { projects, loadingProjects } = this.state;
+    const { projects, loadingProjects, techChips } = this.state;
     const { classes } = this.props;
     return (
       <Paper className={classes.root}>
@@ -152,6 +182,14 @@ class Home extends Component {
             <Button onClick={this.addProject} className={classes.addButton}>List a Project</Button>
           </Grid>
         </Grid>
+        {techChips.map(data => (
+          <Chip
+            color="primary"
+            key={data}
+            label={data}
+            className={classes.chip}
+          />
+        ))}
         <div className={classes.tableWrapper}>
           <Table className={classes.table}>
             <TableHead className={classes.tableHeader}>
@@ -194,10 +232,11 @@ class Home extends Component {
                           {tech.split(',').map(data => (
                             <Chip
                               color="primary"
-                              variant="outlined"
-                              key={data}
-                              label={data}
+                              variant={`${techChips.includes(data.trim()) ? "default" : "outlined"}`}
+                              key={data.trim()}
+                              label={data.trim()}
                               className={classes.chip}
+                              onClick={this.toggleTechChip}
                             />
                           ))}
                         </TableCell>
