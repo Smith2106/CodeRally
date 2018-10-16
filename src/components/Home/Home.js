@@ -99,13 +99,14 @@ class Home extends Component {
   }
 
   async fetchProjects() {
-    const projects = await AppService.getProjects();
+    let projects = await AppService.getProjects();
+    projects = await [...projects].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     // sorting projects by earliest date created
     this.setState({
-      projects: [...projects].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+      projects: projects,
+      initialProjects: projects,
+      loadingProjects: false
     });
-    this.setState({ initialProjects: projects });
-    this.setState({ loadingProjects: false });
   }
 
   addProject() {
@@ -115,7 +116,11 @@ class Home extends Component {
   toggleTechChip(event) {
     const { techChips } = this.state;
     const tech = event.target.textContent;
-    if (!techChips.includes(tech)) techChips.push(tech);
+
+    if (!techChips.includes(tech)) { 
+      techChips.push(tech);
+    }
+
     else techChips.splice(techChips.indexOf(tech), 1);
     this.setState({ techChips }, this.filterProjects);
   }
@@ -131,19 +136,23 @@ class Home extends Component {
 
   filterProjects() {
     const { initialProjects } = this.state;
-    let updatedProject = initialProjects;
-    updatedProject = updatedProject.filter((item) => {
-      const tableContent = `${item.name}${item.description}${item.tech}`;
+    let updatedProjects = initialProjects;
+    updatedProjects = updatedProjects.filter((project) => {
+      const tableContent = `${project.name}${project.description}${project.tech}`;
       let hasTechChip = true;
       
       this.state.techChips.forEach((techChip) => {
-        if (!item.tech.includes(techChip)) hasTechChip = false;
+        if (!project.tech.includes(techChip)) {
+          hasTechChip = false;
+        }
       });
 
-      if (this.state.query !== '') return tableContent.toLowerCase().indexOf(this.state.query) >= 0 && hasTechChip;
+      if (this.state.query !== '') {
+        return tableContent.toLowerCase().indexOf(this.state.query) >= 0 && hasTechChip;
+      }
       return hasTechChip;
     });
-    this.setState({ projects: updatedProject })
+    this.setState({ projects: updatedProjects })
   }
 
   renderSnackbar({ snackbarText }) {
