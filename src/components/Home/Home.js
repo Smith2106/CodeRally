@@ -82,7 +82,8 @@ class Home extends Component {
       initialProjects: [],
       projects: [],
       snackbarText: '',
-      techChips: []
+      techChips: [],
+      query: ''
     };
     this.addProject = this.addProject.bind(this);
     this.modalClosed = this.modalClosed.bind(this);
@@ -91,6 +92,7 @@ class Home extends Component {
     this.filterProjects = this.filterProjects.bind(this);
     this.toggleTechChip = this.toggleTechChip.bind(this);
     this.compTech = this.compTech.bind(this);
+    this.handleQuery = this.handleQuery.bind(this);
   }
 
   async componentDidMount() {
@@ -117,20 +119,23 @@ class Home extends Component {
     if (!techChips.includes(tech)) techChips.push(tech);
     else techChips.splice(techChips.indexOf(tech), 1);
     this.setState({ techChips });
-    this.sortProjects();
+    this.filterProjects();
+  }
+
+  handleQuery(event) {
+    this.setState({ query: event.target.value.toLowerCase() });
     this.filterProjects();
   }
 
   modalClosed() {
     this.setState({ modalOpen: false });
-    this.fetchProjects();
+    this.filterProjects();
   }
 
-  filterProjects(event) {
+  filterProjects() {
     const { initialProjects } = this.state;
     let updatedProject = initialProjects;
     updatedProject = updatedProject.filter((item) => {
-      const query = event ? event.target.value.toLowerCase() : '';
       const tableContent = `${item.name}${item.description}${item.tech}`;
       let hasTechChip = true;
       
@@ -138,17 +143,10 @@ class Home extends Component {
         if (!item.tech.includes(techChip)) hasTechChip = false;
       });
 
-      if (query !== '') return tableContent.toLowerCase().indexOf(query) >= 0 && hasTechChip;
+      if (this.state.query !== '') return tableContent.toLowerCase().indexOf(this.state.query) >= 0 && hasTechChip;
       return hasTechChip;
     });
     this.setState({ projects: updatedProject });
-  }
-
-  sortProjects() {
-    const { projects } = this.state;
-    let updatedProjects = projects;
-    updatedProjects.sort(this.compTech);
-    this.setState({ projects: updatedProjects });
   }
 
   compTech(project1, project2) {
@@ -181,7 +179,8 @@ class Home extends Component {
                 label="Search"
                 margin="normal"
                 style={{ marginLeft: '10px', width: '280px', marginBottom: '10px' }}
-                onChange={this.filterProjects}
+                onChange={this.handleQuery}
+                value={this.state.query}
               />
             </Grid>
           </Hidden>
