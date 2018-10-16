@@ -118,6 +118,7 @@ class Home extends Component {
     else techChips.splice(techChips.indexOf(tech), 1);
     this.setState({ techChips });
     this.sortProjects();
+    this.filterProjects();
   }
 
   modalClosed() {
@@ -129,10 +130,16 @@ class Home extends Component {
     const { initialProjects } = this.state;
     let updatedProject = initialProjects;
     updatedProject = updatedProject.filter((item) => {
-      const query = event.target.value.toLowerCase();
+      const query = event ? event.target.value.toLowerCase() : '';
       const tableContent = `${item.name}${item.description}${item.tech}`;
+      let hasTechChip = true;
+      
+      this.state.techChips.forEach((techChip) => {
+        if (!item.tech.includes(techChip)) hasTechChip = false;
+      });
 
-      return tableContent.toLowerCase().indexOf(query) >= 0;
+      if (query !== '') return tableContent.toLowerCase().indexOf(query) >= 0 && hasTechChip;
+      return hasTechChip;
     });
     this.setState({ projects: updatedProject });
   }
