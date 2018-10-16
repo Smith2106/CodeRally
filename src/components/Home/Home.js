@@ -91,7 +91,6 @@ class Home extends Component {
     this.renderSnackbar = this.renderSnackbar.bind(this);
     this.filterProjects = this.filterProjects.bind(this);
     this.toggleTechChip = this.toggleTechChip.bind(this);
-    this.compTech = this.compTech.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
   }
 
@@ -118,13 +117,11 @@ class Home extends Component {
     const tech = event.target.textContent;
     if (!techChips.includes(tech)) techChips.push(tech);
     else techChips.splice(techChips.indexOf(tech), 1);
-    this.setState({ techChips });
-    this.filterProjects();
+    this.setState({ techChips }, this.filterProjects);
   }
 
   handleQuery(event) {
-    this.setState({ query: event.target.value.toLowerCase() });
-    this.filterProjects();
+    this.setState({ query: event.target.value.toLowerCase() }, this.filterProjects);
   }
 
   modalClosed() {
@@ -146,18 +143,7 @@ class Home extends Component {
       if (this.state.query !== '') return tableContent.toLowerCase().indexOf(this.state.query) >= 0 && hasTechChip;
       return hasTechChip;
     });
-    this.setState({ projects: updatedProject });
-  }
-
-  compTech(project1, project2) {
-    let project1Score = 0
-    let project2Score = 0
-    this.state.techChips.forEach(techChip => {
-      if (project1.tech.includes(techChip)) project1Score++;
-      if (project2.tech.includes(techChip)) project2Score++;
-    });
-
-    return project2Score - project1Score;
+    this.setState({ projects: updatedProject })
   }
 
   renderSnackbar({ snackbarText }) {
